@@ -1,19 +1,37 @@
-# Set up libraries and overall settings
-import RPi.GPIO as GPIO  # Imports the standard Raspberry Pi GPIO library
-from time import sleep   # Imports sleep (aka wait or pause) into the program
-GPIO.setmode(GPIO.BOARD) # Sets the pin numbering system to use the physical layout
+from gpiozero import AngularServo
+from time import sleep
 
-# Set up pin 11 for PWM
-GPIO.setup(8,GPIO.OUT)  # Sets up pin 8 to an output (instead of an input)
-p = GPIO.PWM(8, 50)     # Sets up pin 8 as a PWM pin, second parameter is frequency in Hertz
-p.start(0)               # Starts running PWM on the pin and sets it to 0
+# initialized to GPIO pin 14
+# min_pulse and max_pulse may need adjusting, but these are common values and supported by user reviews for the MG996R
+servo = AngularServo(14, min_angle=0, max_angle=180, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000)
 
-# Move the servo back and forth
-p.ChangeDutyCycle(3)     # Changes the pulse width to 3 (so moves the servo)
-sleep(1)                 # Wait 1 second
-p.ChangeDutyCycle(12)    # Changes the pulse width to 12 (so moves the servo)
-sleep(1)
+# values need to be figured through testing
+'''
+UNLOCK = 15
+LOCK = 30
+'''
 
-# Clean up everything
-p.stop()                 # At the end of the program, stop the PWM
-GPIO.cleanup()           # Resets the GPIO pins back to defaults
+# functions to set the servo angle
+def set_angle(angle):
+    servo.angle = angle
+    sleep(1)
+'''
+def unlock():
+    servo.angle = UNLOCK
+    sleep(1)
+
+def lock():
+    servo.angle = LOCK
+    sleep(1)
+'''
+
+# main program loop
+try:
+    while True:
+        angle = int(input("Enter angle (0 to 180): "))  # user input for angle
+        set_angle(angle)    # set servo to entered angle
+
+except KeyboardInterrupt:
+    print("Program stopped by user")
+
+
