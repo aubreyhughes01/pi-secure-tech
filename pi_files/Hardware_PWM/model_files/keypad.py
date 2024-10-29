@@ -2,7 +2,7 @@ import json
 
 class Keypad:
     def __init__(self):
-        self.file_path = "./key.json"
+        self.file_path = "Hardware_PWM/model_files/key.json"
         self.pin = self.read_passkey()
 
     def read_passkey(self):

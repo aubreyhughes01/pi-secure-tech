@@ -1,6 +1,6 @@
 from tkinter import *
-from keypad import Keypad
-from rotator import Rotator
+from ..model_files.keypad import Keypad
+from ..model_files.rotator import Rotator
 from time import sleep
 
 root = Tk()
