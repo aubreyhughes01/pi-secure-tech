@@ -6,7 +6,7 @@ class Keypad:
     def __init__(self):
         self.file_path = "Hardware_PWM/persistence_files/pin.json"
         self.key_file = "Hardware_PWM/persistence_files/key.key"
-        self.create_key()    # Ensure key is created
+        self.create_key()    # Ensure key is created and pin is encrypted
         self.pin = self.read_passkey()
 
     def read_passkey(self):
@@ -14,16 +14,16 @@ class Keypad:
         json_data = json.loads(data.decode("utf-8"))    # convert the data into a python dictionary
         return json_data["passkey"]
 
-    def change_passkey(self, new_key):
+    def change_passkey(self, new_pin):
         data = self.decrypt_data()
         json_data = json.loads(data.decode("utf-8"))
 
-        json_data['passkey'] = new_key
-        data = json.dumps(json_data).encode("utf-8")
+        json_data['passkey'] = new_pin
+        data = json.dumps(json_data).encode("utf-8")   # convert the data back into bytes-like object for encryption
         
         encrypted_data = self.encrypt_data(data)
 
-        with open(self.file_path, 'wb') as file:
+        with open(self.file_path, 'wb') as file:    # overwrite the old file with the new encryped pin
             file.write(encrypted_data)
 
     def create_key(self):
