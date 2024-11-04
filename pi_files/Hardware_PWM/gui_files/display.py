@@ -39,7 +39,7 @@ def unlock():
     global operator
     kp = Keypad()
     if text.get() == kp.pin:
-        rt = Rotator(90)
+        rt = Rotator(105)
         rt.rotate()
         sleep(1)
         text.set("DOOR IS UNLOCKED")
