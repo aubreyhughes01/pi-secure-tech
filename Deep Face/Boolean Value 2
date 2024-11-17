@@ -1,0 +1,62 @@
+from deepface import DeepFace
+import cv2
+
+def open_lock():
+    """
+    This function simulates opening a lock or triggering another action.
+    Replace this with your specific hardware control logic, such as GPIO output.
+    """
+    print("LOCK OPENED! Triggering the mechanism...")
+
+def stream_with_action(database_path):
+    # Load the database
+    print("Loading database...")
+    models = DeepFace.build_model("VGG-Face")
+    representations = DeepFace.find(img_path=None, db_path=database_path, model_name="VGG-Face", enforce_detection=False)
+
+    # Start the webcam feed
+    print("Starting the camera feed...")
+    cap = cv2.VideoCapture(0)  # Use the first webcam
+
+    found_match = False  # Boolean to track matches
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Analyze the current frame for a face
+        try:
+            # Search for a match in the database
+            matches = DeepFace.find(img_path=frame, db_path=database_path, enforce_detection=False)
+
+            # If a match is found, update the boolean and trigger action
+            if len(matches) > 0:
+                found_match = True
+                print("Match found!")
+                open_lock()  # Call the action function
+                break
+
+        except Exception as e:
+            print("Face not detected:", e)
+            continue
+
+        # Show the live feed
+        cv2.imshow("Live Stream", frame)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
+    # Release the webcam and close all OpenCV windows
+    cap.release()
+    cv2.destroyAllWindows()
+
+    return found_match
+
+# Call the function with your database folder
+database_path = "path_to_your_database"
+match_found = stream_with_action(database_path)
+
+if match_found:
+    print("Action triggered successfully!")
+else:
+    print("No matches detected.")
