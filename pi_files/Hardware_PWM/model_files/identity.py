@@ -34,8 +34,8 @@ class Identity:
 
     def compare(self):
         # dataframe object
-        df = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = database_path)
-        blankdf = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = blank_database)
+        df = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = database_path, anti_spoofing=True)
+        blankdf = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = blank_database, anti_spoofing=True)
 
         try:
             os.remove("Hardware_PWM/persistence_files/temp/captured_image.jpg")
