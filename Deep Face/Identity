@@ -1,0 +1,50 @@
+from deepface import DeepFace  # Uncomment if DeepFace is installed
+
+class Identity:
+
+    def __init__(self):
+        self.database_path = "Hardware_PWM/persistence_files/database"
+        self.blank_database = "Hardware_PWM/persistence_files/blank_database"
+
+    def capture(self, location):
+        cam = cv2.VideoCapture(0)
+
+        if not cam.isOpened():
+            print("Error: cannot open camera")
+            return False
+
+        # Capture frame
+        ret, frame = cam.read()
+
+        if ret:
+            if location == "Hardware_PWM/persistence_files/temp/":
+                cv2.imwrite(f"{location}captured_image.jpg", frame)
+            else:
+                timestamp = int(time.time() * 1000)  # Current timestamp in milliseconds
+                filename = f"captured_image{timestamp}.jpg"
+                cv2.imwrite(f"{location}{filename}", frame)
+        else:
+            print("Error: failed to capture image")
+
+        cam.release()
+        cv2.destroyAllWindows()
+
+    def compare(self):
+        try:
+            temp_image = "Hardware_PWM/persistence_files/temp/captured_image.jpg"
+            df = DeepFace.find(img_path=temp_image, db_path=self.database_path, anti_spoofing=True)
+            blankdf = DeepFace.find(img_path=temp_image, db_path=self.blank_database, anti_spoofing=True)
+
+            if os.path.exists(temp_image):
+                os.remove(temp_image)
+
+            if len(df) > len(blankdf):  # Compare based on dataframe length or confidence score
+                print("Match found")
+                return True
+            else:
+                print("No match found")
+                return False
+
+        except Exception as e:
+            print(f"Error during comparison: {e}")
+            return False
