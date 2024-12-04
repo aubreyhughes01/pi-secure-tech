@@ -89,7 +89,7 @@ def configure_id():
     global operator
     identity = Identity()
     kp = Keypad()
-    if text.get() == kp.pin + "0000":
+    if text.get() == ADMIN:
         identity.capture("Hardware_PWM/persistence_files/database/")
         text.set("FACE PROFILE ADDED SUCCESSFULLY")
         operator = ""
