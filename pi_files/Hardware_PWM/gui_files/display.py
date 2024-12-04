@@ -3,6 +3,9 @@ from ..model_files.keypad import Keypad
 from ..model_files.rotator import Rotator
 from ..model_files.identity import Identity
 from time import sleep
+from adafruit_servokit import ServoKit
+
+ADMIN = "0000"
 
 root = Tk()
 root.title("Access Pad")
@@ -29,8 +32,11 @@ def lock():
     kp = Keypad()
     if text.get() == kp.pin:
         if scan() == True:
-            rt = Rotator(105)
-            rt.rotate()
+            kit = ServoKit(channels=16)
+
+            kit.servo[0].set_pulse_width_range(500, 2500)
+            kit.servo[0].angle = 105
+            
             sleep(1)
             text.set("DOOR IS LOCKED")
         else:
@@ -44,8 +50,11 @@ def unlock():
     kp = Keypad()
     if text.get() == kp.pin:
         if scan() == True:
-            rt = Rotator(105)
-            rt.rotate()
+            kit = ServoKit(channels=16)
+
+            kit.servo[0].set_pulse_width_range(500, 2500)
+            kit.servo[0].angle = 0
+            
             sleep(1)
             text.set("DOOR IS UNLOCKED")
         else:
@@ -92,7 +101,6 @@ def configure_id():
     
 def scan():
     identity = Identity()
-    rt = Rotator(105)
     identity.capture("Hardware_PWM/persistence_files/temp/")
     if identity.compare() == True:
         return True
@@ -122,14 +130,14 @@ changebtn = Button(root,command=lambda:is_clicked(),padx=0,pady=0,bg="grey",bd=3
 
 scanbtn = Button(root,command=lambda:configure_id(),padx=30,pady=30,bg="grey",bd=30,fg="black",font=("times new roman",30,"bold"),text="FaceID").grid(row=4,column=3, sticky="nsew")
 
-root.grid_columnconfigure(0, weight=1)
-root.grid_columnconfigure(1, weight=1)
-root.grid_columnconfigure(2, weight=1)
-root.grid_columnconfigure(3, weight=1)
-root.grid_rowconfigure(0, weight=1)
-root.grid_rowconfigure(1, weight=1)
-root.grid_rowconfigure(2, weight=1)
-root.grid_rowconfigure(3, weight=1)
-root.grid_rowconfigure(4, weight=1)
+root.grid_columnconfigure(0, weight=1, minsize=100)
+root.grid_columnconfigure(1, weight=1, minsize=100)
+root.grid_columnconfigure(2, weight=1, minsize=100)
+root.grid_columnconfigure(3, weight=1, minsize=100)
+root.grid_rowconfigure(0, weight=1, minsize=65)
+root.grid_rowconfigure(1, weight=1, minsize=100)
+root.grid_rowconfigure(2, weight=1, minsize=100)
+root.grid_rowconfigure(3, weight=1, minsize=100)
+root.grid_rowconfigure(4, weight=1, minsize=100)
 
 root.mainloop()
