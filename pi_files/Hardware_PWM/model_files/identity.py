@@ -2,8 +2,7 @@ import os
 import cv2
 import sys
 import time
-#import pandas as pd
-#from deepface import DeepFace
+from deepface import DeepFace
 
 class Identity:
 
@@ -34,15 +33,10 @@ class Identity:
 
     def compare(self):
         # dataframe object
-        df = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = database_path, anti_spoofing=True)
-        blankdf = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = blank_database, anti_spoofing=True)
+        df = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = database_path)
+        blankdf = DeepFace.find(img_path = "Hardware_PWM/persistence_files/temp/captured_image.jpg", db_path = blank_database, enforce_detection=False)
 
-        try:
-            os.remove("Hardware_PWM/persistence_files/temp/captured_image.jpg")
-        except:
-            print("Error deleting temp image")
-
-        if sys.getsizeof(df) > sys.getsizeof(blankdf):     # comparison of dataframe size when image is identified vs when it's unsuccessful
+        if sys.getsizeof(df[0]) > sys.getsizeof(blankdf[0]):     # comparison of dataframe size when image is identified vs when it's unsuccessful
             print("Match found")
             return True
         else:
